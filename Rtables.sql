@@ -36,21 +36,25 @@ SELECT * FROM food_items
 
 CREATE TABLE seat_status(
 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-seatnumber VARCHAR(100),
-STATUS BOOLEAN NOT NULL DEFAULT 0
+seat_id INT,
+seat_status VARCHAR(100) DEFAULT 'AVAILABLE',
+seat_state BOOLEAN NOT NULL DEFAULT 0
 )
-INSERT INTO seat_status (seatnumber) VALUES
-('seat_one'),
-('seat_two'),
-('seat_three'),
-('seat_four'),
-('seat_five'),
-('seat_six'),
-('seat_seven'),
-('seat_eight'),
-('seat_nine'),
-('seat_ten')
+INSERT INTO seat_status (seat_id) VALUES
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10)
+
+
 SELECT * FROM seat_status
+DROP TABLE seat_status
 
 -------------------------------------------------------------------------------
 
@@ -80,30 +84,30 @@ CREATE TABLE stock_details(
 id INT AUTO_INCREMENT,
 item_id INT,
 item_name VARCHAR(100),
-stock_date DATE,
+
 PRIMARY KEY (id,item_id),
 remaining_quantity INT
 )
 DROP TABLE stock_details
 SELECT * FROM stock_details
-INSERT INTO stock_details (item_id,item_name)VALUES
-(1,'Idly'),
-(2,'Vada'),
-(3,'Dosa'),
-(4,'Poori'),
-(5,'Pongal'),
-(6,'Coffee'),
-(7,'Tea'),
+INSERT INTO stock_details (item_id,item_name,remaining_quantity)VALUES
+(1,'Idly',100),
+(2,'Vada',100),
+(3,'Dosa',100),
+(4,'Poori',100),
+(5,'Pongal',100),
+(6,'Coffee',100),
+(7,'Tea',100),
 
-(8,'SouthIndianMeals'),
-(9,'NorthIndianThali'),
-(10,'VariteyRice'),
+(8,'SouthIndianMeals',75),
+(9,'NorthIndianThali',75),
+(10,'VariteyRice',100),
 
-(11,'Coffee'),
-(12,'Tea'),
-(13,'Snacks'),
+(11,'Coffee',200),
+(12,'Tea',200),
+(13,'Snacks',200),
 
-(14,'FriedRice'),
-(15,'Chapatti'),
-(16,'ChatItems')
-
+(14,'FriedRice',100),
+(15,'Chapatti',100),
+(16,'ChatItems',100)
+TRUNCATE stock_details

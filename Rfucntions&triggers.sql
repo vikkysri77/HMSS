@@ -7,10 +7,9 @@ BEFORE INSERT
 ON customer_order
 FOR EACH ROW
 BEGIN
-
-UPDATE seat_status SET STATUS=TRUE WHERE seat_status.`id`=1;
-
-END;
+SET @md=(SELECT customer_id FROM customer_order);
+UPDATE seat_status SET seat_state=TRUE WHERE seat_status.`seat_id`=@md;
+UPDATE customer_order SET seat_number=@md WHERE customer_order.`customer_id`=
 END$$
 DELIMITER ;
 
@@ -22,18 +21,15 @@ AFTER INSERT
 ON customer_order
 FOR EACH ROW
 BEGIN
-UPDATE stock_details SET remaining_quantity=SELECT fnt1(,)
+SET @dd=(SELECT item_id FROM customer_order);
+SET @ld=((SELECT remaining_quantity FROM stock_details WHERE stock_details.`item_id`=@dd)
+-(SELECT quantity FROM customer_order ));
 
-END;
-END$$
+UPDATE stock_details SET remaining_quantity=@ld WHERE stock_details.`item_id`=@dd;
+END $$
 DELIMITER ;
 
 
 
 
-DELIMITER $$
-CREATE FUNCTION fnt1 RETURNS()
-
-
-END;
 
