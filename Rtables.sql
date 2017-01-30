@@ -1,90 +1,113 @@
-DROP PROCEDURE IF EXISTS customer_order;
-DELIMITER $$
-CREATE PROCEDURE customer_order(customer_id1 INT,item_name1 VARCHAR(100),quantity1 INT)
-BEGIN
-SET @cd=customer_id1;
-SET @hd=(SELECT id FROM food_items WHERE item_name=item_name1);
-SET @td=(SELECT id FROM food_items WHERE id=@hd);
-SET @qty=quantity1;
-SET @sd=(SELECT remaining_quantity FROM stock_details WHERE id=@hd);
-/*if condition 2 to check if the item is in the menu*/
-IF (SELECT id FROM food_items WHERE food_items.`id`=@td ) THEN
+/*Table for fooditems*/
+CREATE TABLE food_items(
+id INT PRIMARY KEY NOT NULL,
+item_name VARCHAR(100),
+item_type ENUM('Breakfast','Lunch','Refreshments','Dinner'),
+stock INT
+)
 
-	/*if condition 3 to check quantity*/
-		IF ((@sd-@qty)>0) THEN
-		/* if condition 1 to restric order of 5 items only*/
-			IF ((SELECT COUNT(item_id) FROM customer_order WHERE item_id=@td AND customer_id=@cd)<5) THEN
-				
-	/*if conditions to check the avaialbility of food based on time and then take order*/
+INSERT INTO food_items VALUES
+(1,'Idly','Breakfast',100),
+(2,'Vada','Breakfast',100),
+(3,'Dosa','Breakfast',100),
+(4,'Poori','Breakfast',100),
+(5,'Pongal','Breakfast',100),
+(6,'Coffee','Breakfast',100),
+(7,'Tea','Breakfast',100),
+
+(8,'SouthIndianMeals','Lunch',75),
+(9,'NorthIndianThali','Lunch',75),
+(10,'VariteyRice','Lunch',100),
+
+(11,'Coffee','Refreshments',200),
+(12,'Tea','Refreshments',200),
+(13,'Snacks','Refreshments',200),
+
+(14,'FriedRice','Dinner',100),
+(15,'Chapatti','Dinner',100),
+(16,'ChatItems','Dinner',100)
+
+
+SELECT * FROM food_items
+
+
+-------------------------------------------------------------------------------
+/* Table for seats*/
+
+CREATE TABLE seat_status(
+id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+seat_id INT,
+seat_status VARCHAR(100) DEFAULT 'AVAILABLE',
+seat_state BOOLEAN NOT NULL DEFAULT 0
+)
+INSERT INTO seat_status (seat_id) VALUES
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10)
+
+
+SELECT * FROM seat_status
+DROP TABLE seat_status
+
+-------------------------------------------------------------------------------
+
+CREATE TABLE customer_order (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+customer_id INT NOT NULL, 
+item_id INT NOT NULL,
+quantity INT NOT NULL,
+order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+seat_number INT,
+CONSTRAINT fkey1 FOREIGN KEY (seat_number) REFERENCES seat_status(id),
+CONSTRAINT fkey2 FOREIGN KEY (item_id) REFERENCES food_items(id)
+)
 	
-	IF (@td>=1 AND @td<=7) THEN
-		/**/
-		IF (CURRENT_TIME() BETWEEN '08:00:00' AND '11:00:00') THEN
-		INSERT INTO customer_order (customer_id,item_id,quantity) VALUES (@cd,@td,@qty);
-		SELECT 'order confirmed';
-		ELSE
-		SELECT 'item not available at this time' ;
-		END IF;
-		/**/
-		ELSE
-		IF (@td>=8 AND @td<=10) THEN
-		/**/
-		IF (CURRENT_TIME() BETWEEN '11:15:00' AND '15:00:00') THEN
-		INSERT INTO customer_order (customer_id,item_id,quantity) VALUES (@cd,@td,@qty);
-		SELECT 'order confirmed';
-		ELSE
-		SELECT 'item not available at this time' ;
-		END IF;
-		/**/
-		ELSE 
-		IF (@td>=11 AND @td<=13) THEN
-		/**/
-		IF (CURRENT_TIME() BETWEEN '15:15:00' AND '23:00:00') THEN 
-		INSERT INTO customer_order (customer_id,item_id,quantity) VALUES (@cd,@td,@qty);
-		SELECT 'order confirmed' ;
-		ELSE
-		SELECT 'item not available at this time' ;
-		END IF;
-		/**/
-		ELSE
-		IF (@td>=14 AND @td<=16) THEN
-		/**/
-		IF (SELECT order_date FROM customer_order WHERE TIME(order_Date) BETWEEN '19:00:00' AND '23:00:00') THEN
-		INSERT INTO customer_order (customer_id,item_id,quantity) VALUES (@cd,@td,@qty);
-		SELECT 'order confirmed' ;
-		ELSE
-		SELECT 'item not available at this time' ;
-		END IF;
-	END IF;
-	END IF;
-	END IF;
-	END IF;
-	
-	/*end of if condition to check the time based ordering*/
-				ELSE 
-				SELECT 'sorry only 5 items';
-			END IF;
-		/*end of if condition 1*/
-		ELSE 
-		SELECT "ordered quantity is exceeding the stock limit";
-		END IF;
-	/*end of if condition 3*/
-	
-ELSE
-SELECT "enter a valid item from the menu";
-END IF;
-/*end of if condition 2*/
+DROP TABLE customer_order
+SELECT * FROM customer_order
 
 
-END$$
-DELIMITER ;
-
-
-CALL customer_order(2,'VariteyRice',20);
+-------------------------------------------------------------------------------
 
 
 
 
+/*Table for daily stock_details*/
 
+CREATE TABLE stock_details(
+id INT AUTO_INCREMENT,
+item_id INT,
+item_name VARCHAR(100),
 
+PRIMARY KEY (id,item_id),
+remaining_quantity INT
+)
+DROP TABLE stock_details
+SELECT * FROM stock_details
+INSERT INTO stock_details (item_id,item_name,remaining_quantity)VALUES
+(1,'Idly',100),
+(2,'Vada',100),
+(3,'Dosa',100),
+(4,'Poori',100),
+(5,'Pongal',100),
+(6,'Coffee',100),
+(7,'Tea',100),
 
+(8,'SouthIndianMeals',75),
+(9,'NorthIndianThali',75),
+(10,'VariteyRice',100),
+
+(11,'Coffee',200),
+(12,'Tea',200),
+(13,'Snacks',200),
+
+(14,'FriedRice',100),
+(15,'Chapatti',100),
+(16,'ChatItems',100)
+TRUNCATE stock_details

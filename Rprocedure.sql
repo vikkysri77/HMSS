@@ -80,7 +80,7 @@ END$$
 DELIMITER ;
 
 
-CALL customer_order(2,'VariteyRice',20);
+CALL customer_order(2,'Tea',20);
 
 
 
